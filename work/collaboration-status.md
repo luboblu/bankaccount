@@ -20,11 +20,35 @@
 3. 重要決定寫入「決策紀錄」。
 4. 帳密、金鑰不進 repo，也不進交接內容（只寫變數名稱，如 `ENCRYPTION_KEY`，不寫值）。
 
+## 1A. 本機協作方式（D-006）
+
+本節是給本機 Claude Code session 的交接。新 session 看不到先前的對話，以本檔與 `work/tasks/` 為準。
+
+### 派工給 Codex
+
+1. 確認 Codex CLI 已安裝並登入：`codex --version`。登入由使用者自己完成，Claude 不經手任何帳密。
+2. 開工前確認工作目錄乾淨（`git status --short`），並且在 `claude/sharp-ritchie-e6rnzz` 分支上。
+3. 用非互動模式派工，例如 `codex exec "<指示>"`。實際參數以本機版本的 `codex exec --help` 為準。
+   - 指示內容：讀 `work/tasks/T-xxx-*.md` 與本檔、只改任務單允許的檔案、跑 `npm run verify`、把結果填進任務單「回報格式」、不 commit、不 push、有需要決定的事就停下來回報。
+   - 權限只開放寫入 repo 工作目錄，不給全機權限。
+4. Codex 執行期間 Claude 不改程式。指令結束後，才換 Claude 持有。
+
+### 審查
+
+1. **第一次審查（Claude）**：看 `git diff` 的每一處，確認沒有超出任務單範圍，並在乾淨狀態重跑 `npm ci && npm run verify`。結果寫進任務單「審查紀錄」。
+2. **第二次審查（獨立子代理）**：開新的子代理，不要用 fork，讓它只讀檔案、看不到對話。提供的資訊只有任務單路徑、`git diff` 與 repo 本身。Claude 要對照程式確認每個發現，再決定要不要修。
+3. **修正**：把確認過的問題寫成修正清單，再用 `codex exec` 派工；改完重新審查，直到通過。
+4. **上線（Claude）**：commit（訊息註明任務編號與「實作：Codex／審查：Claude」）、push、確認 CI，最後更新本檔。
+
+### 代寫
+
+只有在 Codex 額度用完時才由 Claude 代寫，並在第 6 節記錄。Codex 回來後，要用 `codex exec` 請它審查代寫的部分。
+
 ## 2. 目前狀態
 
 | 項目 | 內容 |
 |---|---|
-| 目前階段 | T-001 已派工給 Codex（2026-11-09），完成後由使用者推到 `review/T-001` 分支供審查 |
+| 目前階段 | 協作環境改為本機（D-006）。T-001 已派工給 Codex；若 Codex 尚未開始，由本機 Claude 依第 1A 節重新派工 |
 | 程式持有者 | Codex（T-001） |
 | 進行中任務 | T-001 |
 | 開發分支 | `claude/sharp-ritchie-e6rnzz` |
@@ -45,6 +69,7 @@
 | D-003 | 2026-11-09 | Node 22 verify 失敗先獨立修復，作為 T-001 | 使用者 | 基線觀察 |
 | D-004 | 2026-11-09 | 採用 Next.js App Router 全端（維持 ADR-004），先只在本機執行，零成本 | 使用者 | 比較過 GitHub Pages、Vercel 免費方案、前後端分離後選定 |
 | D-005 | 2026-11-09 | 暫不做任何對外部署（GitHub Pages、Vercel 都不做）；要給別人看時再另行決定。若改用 Pages，需重新評估前後端分離方案 | 使用者 | 同 D-004 |
+| D-006 | 2026-11-09 | 改在本機協作：Claude Code 與 Codex CLI 在同一個 repo 資料夾工作，Claude 可直接派工給 Codex，不再需要 `review/*` 審查分支 | 使用者 | 雲端 session 無法執行或接觸 Codex，每輪都要人工轉交 |
 
 ## 4A. Phase 0 任務順序（依 D-002、D-004）
 
