@@ -8,10 +8,10 @@ No production deployment, provider registration, or external infrastructure chan
 
 ## Local verification
 
-Prerequisites: Node 22.x, npm, and Docker Desktop (only for the container/database checks).
+Prerequisites: Node 22 or 24, npm, and Docker Desktop (only for the container/database checks).
 
 ```sh
-npm install --ignore-scripts --no-audit --no-fund
+npm ci --ignore-scripts --no-audit --no-fund
 npm run verify
 docker build --target verify .
 ```
@@ -26,7 +26,7 @@ docker compose logs --tail=100 postgres
 
 The service is ready only when `docker compose ps` reports `healthy`. Schema initialization occurs only on a new named volume. Do not use this compose file with production credentials or a remotely exposed database port.
 
-Dependency note: this repository currently has no committed lockfile. TypeScript is pinned exactly in `package.json`; the next dependency-enabled change must generate and commit `package-lock.json`, then replace `npm install` with `npm ci` in this document, the Dockerfile, and CI workflow.
+Dependency note: `package-lock.json` pins the dependency tree, and this document, the Dockerfile, and CI all install with `npm ci`. TypeScript is pinned exactly in `package.json`.
 
 ## Secrets and logs
 
