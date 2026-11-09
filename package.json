@@ -1,0 +1,19 @@
+{
+  "name": "bankhub",
+  "version": "0.1.0",
+  "private": true,
+  "description": "BankHub multi-bank aggregation core",
+  "engines": {
+    "node": ">=22 <25"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "npm run build && node --test --test-isolation=none tests/mock-bank-adapter.test.js",
+    "test:qa": "npm run build && node --test --test-isolation=none tests/qa-regression.test.js",
+    "verify": "npm run typecheck && npm test && npm run test:qa"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}
