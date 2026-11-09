@@ -24,7 +24,7 @@
 
 | 項目 | 內容 |
 |---|---|
-| 目前階段 | T-001 任務單已寫好，待派給 Codex；T-002 起的 Phase 0 框架方案待使用者確認 |
+| 目前階段 | T-001 待派給 Codex；T-002 已規劃，等 T-001 審查通過後派工 |
 | 程式持有者 | 無（尚未派工） |
 | 進行中任務 | 無 |
 | 開發分支 | `claude/sharp-ritchie-e6rnzz` |
@@ -43,22 +43,21 @@
 | D-001 | 2026-11-09 | 採用上述協作流程與規則 | 使用者 | 使用者指示 |
 | D-002 | 2026-11-09 | Phase 0 納入 P0-1 骨架、P0-3 認證、P0-4 Adapter 接 API、P0-5 Redis cache（P0-2 schema 已存在） | 使用者 | 範圍確認 |
 | D-003 | 2026-11-09 | Node 22 verify 失敗先獨立修復，作為 T-001 | 使用者 | 基線觀察 |
-| D-004 | 待確認 | 框架與成本：使用者要求零成本、可盡快有介面測試。Claude 建議全部本機執行的 Next.js（見下方提案） | 待使用者 | — |
+| D-004 | 2026-11-09 | 採用 Next.js App Router 全端（維持 ADR-004），先只在本機執行，零成本 | 使用者 | 比較過 GitHub Pages、Vercel 免費方案、前後端分離後選定 |
+| D-005 | 2026-11-09 | 暫不做任何對外部署（GitHub Pages、Vercel 都不做）；要給別人看時再另行決定。若改用 Pages，需重新評估前後端分離方案 | 使用者 | 同 D-004 |
 
-## 4A. D-004 提案（待確認）
+## 4A. Phase 0 任務順序（依 D-002、D-004）
 
-- 框架：Next.js App Router + TypeScript，維持 ADR-004；採用目前的穩定版，不寫死文件裡的 14。
-- 零成本：全部在本機跑。`npm run dev` 開瀏覽器即可看到介面；PostgreSQL 與 Redis 用既有的 `compose.yaml` 跑本機容器。不部署 Vercel，也不用 Supabase/Upstash 的雲端服務。
-- 先有介面：T-002 骨架完成後，T-003 先做 P0-4（一個 mock 帳戶列表頁 + `/api/accounts`，資料來自 MockBankAdapter），不需要資料庫或登入就能點。
-- 認證：先做 Email/Password（Auth.js Credentials，本機 DB）。Google OAuth 本身免費，但需要你在 Google Cloud 建立 OAuth client，憑證只放在你本機的 `.env`；可以延後到最後。
-- 建議順序：T-001 基線 → T-002 骨架 → T-003 Adapter 接 API + mock 頁面 → T-004 Redis cache → T-005 認證。
+T-001 基線 → T-002 骨架（P0-1）→ T-003 Adapter 接 API + mock 頁面（P0-4）→ T-004 Redis cache（P0-5）→ T-005 認證（P0-3：先做 Email/Password；Google OAuth 需要使用者自行在 Google Cloud 建 OAuth client，憑證只放本機 `.env`，排在最後）。
+
+本機需求：Node 22 以上；到 T-004、T-005 才需要 Docker（PostgreSQL、Redis）與本機 `.env`。
 
 ## 5. 任務清單
 
 | 任務 | 標題 | 狀態 | 持有者 |
 |---|---|---|---|
 | T-001 | 修復 Node 22 的 verify 基線 | 待派工 | Codex（未開始） |
-| T-002 | P0-1 專案骨架（待 D-004 確認） | 未建立 | — |
+| T-002 | P0-1 Next.js 專案骨架（本機） | 已規劃，等 T-001 | — |
 
 ## 6. 代寫紀錄
 
