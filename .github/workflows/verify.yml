@@ -12,14 +12,16 @@ jobs:
   core-verification:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
+    strategy:
+      matrix:
+        node-version: [22, 24]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: ${{ matrix.node-version }}
           cache: npm
-      # A lockfile is not yet available in this repository. TypeScript is
-      # pinned exactly in package.json; switch to npm ci when it is committed.
-      - run: npm install --ignore-scripts --no-audit --no-fund
+      - run: npm ci --ignore-scripts --no-audit --no-fund
       - run: npm run verify
-      - run: docker build --target verify .
+      - if: matrix.node-version == 22
+        run: docker build --target verify .
